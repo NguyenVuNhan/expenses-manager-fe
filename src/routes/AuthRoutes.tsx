@@ -1,12 +1,16 @@
-import React, { lazy } from "react";
+import React from "react";
 import { Route, Switch } from "react-router-dom";
 
-const Login = lazy(() => import("../pages/Login"));
+import Login from "pages/Authentication/Login";
+import Register from "pages/Authentication/Register";
+import ForgotPassword from "pages/Authentication/ForgotPassword";
 
 const AuthRoutes = () => {
   return (
     <Switch>
-      <Route path="/login" component={Login} />
+      <Route exact path="/login" component={Login} />
+      <Route exact path="/register" component={Register} />
+      <Route exact path="/forgot-password" component={ForgotPassword} />
     </Switch>
   );
 };

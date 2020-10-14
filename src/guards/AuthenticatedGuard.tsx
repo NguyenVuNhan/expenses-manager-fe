@@ -6,16 +6,16 @@ import {
   RouteComponentProps,
 } from "react-router-dom";
 
-interface AuthenticatedGuardProps extends RouteProps {
-  isAuthenticated: boolean;
+interface Props extends RouteProps {
+  isAuthenticated: boolean | undefined;
   component: ComponentType<RouteComponentProps>;
 }
 
 const AuthenticatedGuard = ({
-  isAuthenticated,
   component: Component,
+  isAuthenticated,
   ...rest
-}: AuthenticatedGuardProps) => {
+}: Props) => {
   return (
     <Route
       {...rest}
@@ -23,6 +23,7 @@ const AuthenticatedGuard = ({
         if (isAuthenticated) {
           return <Component {...props} />;
         }
+
         return <Redirect to="/login" />;
       }}
     />

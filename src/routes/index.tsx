@@ -2,15 +2,21 @@ import React from "react";
 import { useStore } from "../hooks";
 import { BrowserRouter, Redirect } from "react-router-dom";
 import AuthRoutes from "./AuthRoutes";
-import authStore from "../store/auth.store";
+import HomeRoutes from "routes/HomeRoutes";
+import authStore from "store/auth.store";
 
 const Routes = () => {
-  const isAuthenticated = useStore(authStore);
+  const auth = useStore<AuthStoreType>(authStore);
 
   return (
     <BrowserRouter>
       <AuthRoutes />
-      {!isAuthenticated && <Redirect to="/login" />}
+      <HomeRoutes isAuthenticated={auth?.isAuthenticated} />
+      {auth && !auth.isAuthenticated ? (
+        <Redirect to="/login" />
+      ) : (
+        <Redirect to="/" />
+      )}
     </BrowserRouter>
   );
 };

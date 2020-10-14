@@ -1,12 +1,16 @@
-import React, { Suspense } from "react";
-import Loading from "./pages/Loading";
+import React from "react";
+import { CssBaseline, MuiThemeProvider } from "@material-ui/core";
+import GlobalStyle from "./GlobalStyle";
 import Routes from "./routes";
+import theme from "./theme";
 
 const App = () => {
   return (
-    <Suspense fallback={<Loading />}>
+    <MuiThemeProvider theme={theme}>
+      <CssBaseline />
+      <GlobalStyle />
       <Routes />
-    </Suspense>
+    </MuiThemeProvider>
   );
 };
 
