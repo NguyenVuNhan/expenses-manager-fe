@@ -11,12 +11,12 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const Home = () => {
   // TODo: get widget from local storage
-  const [myWidgets, setMyWidgets] = useState<string[]>([
+  const myWidgets = [
     "IncomeExpenseWidget",
     "WalletWidget",
     "ExpensesFlowWidget",
     "TransactionsWidget",
-  ]);
+  ];
   const layout = getLayout(myWidgets, lay);
   const [layouts, setLayouts] = useState<ReactGridLayout.Layouts>(layout);
 

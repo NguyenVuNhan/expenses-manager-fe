@@ -11,7 +11,6 @@ import WidgetTemplate from "components/templates/widget.template";
 import Loading from "pages/Loading";
 import { useStore } from "hooks";
 import { transactionsStore } from "store";
-import { addTransaction } from "services/transactions.service";
 import TransactionModal from "components/organisms/TransactionModal";
 
 const useStyles = makeStyles((theme) => ({

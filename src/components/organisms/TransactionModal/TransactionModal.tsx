@@ -1,17 +1,13 @@
 import React from "react";
-import { useForm } from "react-hook-form";
-import Modal from "@material-ui/core/Modal";
-import Paper from "@material-ui/core/Paper";
-import Backdrop from "@material-ui/core/Backdrop";
-import Fade from "@material-ui/core/Fade";
-import Divider from "@material-ui/core/Divider";
+import { useForm, Controller } from "react-hook-form";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
-import { makeStyles } from "@material-ui/core/styles";
+import FormControl from "@material-ui/core/FormControl";
+import InputLabel from "@material-ui/core/InputLabel";
+import Select from "@material-ui/core/Select";
 import { addTransaction } from "services/transactions.service";
-import FormSelect from "components/atoms/FormSelect/FormSelect";
 import { isEmpty } from "helpers/validate.helper";
 import ModalTemplate from "components/templates/modal.templace";
 
@@ -24,33 +20,37 @@ const wallets = ["Wallet", "Saving", "Debt&Loan"];
 const categories = ["Bills & Utilities", "Business", "Education"];
 
 const TransactionModal = ({ open, close }: Props) => {
-  const { handleSubmit, register, errors, setValue, setError } = useForm<
+  const { handleSubmit, register, errors, setError, control } = useForm<
     TransactionFormType
   >();
 
   const onSubmit = handleSubmit((data: TransactionFormType) => {
     const date: Date | undefined = data.date;
 
-    // Validate data
-    if (isEmpty(data.category)) {
-      setError("category", {
-        type: "manual",
-        message: "Please select a category",
-      });
-      return;
-    }
-
-    console.log(data.category);
+    console.log(data);
+    console.log(data.category !== "");
     console.log(typeof data.category);
 
-    if (!data.wallet) data.wallet = wallets[0];
+    // // Validate data
+    // if (isEmpty(data.category)) {
+    //   setError("category", {
+    //     type: "manual",
+    //     message: "Please select a category",
+    //   });
+    //   return;
+    // }
+
+    // if (!data.wallet) data.wallet = wallets[0];
     // Work around to for rhf
     if (typeof data.amount === "string") data.amount = parseInt(data.amount);
+    console.log(errors);
 
-    delete data.date;
-    if (date) addTransaction(data, new Date(date));
-    else addTransaction(data);
-    close();
+    return;
+
+    // delete data.date;
+    // if (date) addTransaction(data, new Date(date));
+    // else addTransaction(data);
+    // close();
   });
 
   return (
@@ -63,46 +63,56 @@ const TransactionModal = ({ open, close }: Props) => {
     >
       <form onSubmit={onSubmit}>
         <Grid className="m-0 w-100" container justify="center" spacing={3}>
-          <Grid item className="w-100" sm={4}>
-            <FormSelect<TransactionFormType>
-              label="Wallet"
-              name="wallet"
-              className="w-100"
-              setValue={setValue}
-              defaultValue={wallets[0]}
-            >
-              {wallets.map((e, i) => (
-                <MenuItem key={i} value={e}>
-                  {e}
-                </MenuItem>
-              ))}
-            </FormSelect>
+          <Grid item sm={4}>
+            <FormControl fullWidth>
+              <InputLabel>Wallet</InputLabel>
+              <Controller
+                control={control}
+                name="wallet"
+                defaultValue={wallets[0]}
+                rule={{ required: true }}
+                as={
+                  <Select label="Wallet">
+                    {wallets.map((e, i) => (
+                      <MenuItem key={i} value={e}>
+                        {e}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                }
+              />
+            </FormControl>
           </Grid>
 
-          <Grid item className="w-100" sm={4}>
-            <TextField
-              select
-              label="Category"
-              name="category"
-              className="w-100"
-              error={Boolean(errors.category)}
-              helperText={
-                Boolean(errors.category) ? errors.category?.message : ""
-              }
-              defaultValue="none"
-            >
-              <MenuItem value="none" disabled>
-                Category
-              </MenuItem>
-              {categories.map((e, i) => (
-                <MenuItem key={i + 1} value={e}>
-                  {e}
-                </MenuItem>
-              ))}
-            </TextField>
+          <Grid item sm={4}>
+            <FormControl fullWidth>
+              <InputLabel>Category</InputLabel>
+              <Controller
+                control={control}
+                name="category"
+                defaultValue=""
+                rule={{
+                  required: "select one option",
+                  // validate: (value: string) =>
+                  //   value !== "" || "Should not be empty",
+                }}
+                as={
+                  <Select label="Category">
+                    <MenuItem value="" disabled>
+                      Category
+                    </MenuItem>
+                    {categories.map((e, i) => (
+                      <MenuItem key={i + 1} value={e}>
+                        {e}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                }
+              />
+            </FormControl>
           </Grid>
 
-          <Grid item className="w-100" sm={4}>
+          <Grid item sm={4}>
             <TextField
               type="number"
               label="Amount"
@@ -114,7 +124,7 @@ const TransactionModal = ({ open, close }: Props) => {
               })}
             />
           </Grid>
-          <Grid item className="w-100" sm={4}>
+          <Grid item sm={4}>
             <TextField
               id="date"
               name="date"
@@ -125,7 +135,7 @@ const TransactionModal = ({ open, close }: Props) => {
               defaultValue={new Date().toISOString().substring(0, 10)}
             />
           </Grid>
-          <Grid item className="w-100" sm={8}>
+          <Grid item sm={8}>
             <TextField
               id="note"
               label="note"
@@ -134,7 +144,7 @@ const TransactionModal = ({ open, close }: Props) => {
               inputRef={register}
             />
           </Grid>
-          <Grid item container direction="row" className="w-100" sm={12}>
+          <Grid item container direction="row" sm={12}>
             <div className="flex-grow-1" />
             <Button
               className="mr-1"
