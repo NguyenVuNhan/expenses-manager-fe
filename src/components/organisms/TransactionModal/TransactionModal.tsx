@@ -7,9 +7,9 @@ import Button from "@material-ui/core/Button";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
-import { addTransaction } from "services/transactions.service";
 import { isEmpty } from "helpers/validate.helper";
-import ModalTemplate from "components/templates/modal.templace";
+import { addTransaction } from "services/transactions.service";
+import ModalTemplate from "components/templates/modal.template";
 
 interface Props {
   open: boolean;
@@ -27,30 +27,22 @@ const TransactionModal = ({ open, close }: Props) => {
   const onSubmit = handleSubmit((data: TransactionFormType) => {
     const date: Date | undefined = data.date;
 
-    console.log(data);
-    console.log(data.category !== "");
-    console.log(typeof data.category);
+    // Validate data
+    if (isEmpty(data.category)) {
+      setError("category", {
+        type: "manual",
+        message: "Please select a category",
+      });
+      return;
+    }
 
-    // // Validate data
-    // if (isEmpty(data.category)) {
-    //   setError("category", {
-    //     type: "manual",
-    //     message: "Please select a category",
-    //   });
-    //   return;
-    // }
-
-    // if (!data.wallet) data.wallet = wallets[0];
     // Work around to for rhf
     if (typeof data.amount === "string") data.amount = parseInt(data.amount);
-    console.log(errors);
 
-    return;
-
-    // delete data.date;
-    // if (date) addTransaction(data, new Date(date));
-    // else addTransaction(data);
-    // close();
+    delete data.date;
+    if (date) addTransaction(data, new Date(date));
+    else addTransaction(data);
+    close();
   });
 
   return (
@@ -91,7 +83,7 @@ const TransactionModal = ({ open, close }: Props) => {
                 control={control}
                 name="category"
                 defaultValue=""
-                rule={{
+                rules={{
                   required: "select one option",
                   // validate: (value: string) =>
                   //   value !== "" || "Should not be empty",
